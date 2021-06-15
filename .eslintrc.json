@@ -15,6 +15,8 @@
     "no-console": "warn",
     "semi": "off",
     "linebreak-style": "off",
-    "import/newline-after-import": "off"
+    "import/newline-after-import": "off",
+    "import/no-unresolved": "off",
+    "import/extensions": "off"
   }
 }

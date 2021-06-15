@@ -3,29 +3,50 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "tsc -w && node dist/index.js",
-    "dev": "nodemon dist/index.js",
+    "test": "./node_modules/.bin/mocha --require ts-node/register ./test/*.spec.ts",
+    "test-coverage": "nyc ./node_modules/.bin/mocha --require ts-node/register ./test/*.spec.ts",
+    "start": "tsc -w && node dist/src/index.js",
+    "dev": "nodemon dist/src/index.js",
     "prepare": "husky install",
-    "eslint":"npx eslint src/*.ts",
-    "eslint-fix":"npx eslint src/*.ts --fix"
+    "eslint": "npx eslint src/*.ts",
+    "eslint-fix": "npx eslint src/*.ts --fix"
   },
   "keywords": [],
   "author": "pixrael777@gmail.com",
   "license": "ISC",
   "devDependencies": {
     "@types/express": "^4.17.12",
+    "@types/mocha": "^8.2.2",
     "@types/node": "^15.12.2",
     "@typescript-eslint/eslint-plugin": "^4.26.1",
     "@typescript-eslint/parser": "^4.26.1",
+    "chai": "^4.3.4",
     "eslint": "^7.28.0",
     "eslint-config-airbnb-base": "^14.2.1",
     "eslint-plugin-import": "^2.23.4",
+    "husky": "^6.0.0",
+    "mocha": "^9.0.0",
     "nodemon": "^2.0.7",
-    "typescript": "^4.3.2",
-    "husky": "^6.0.0"
+    "nyc": "^15.1.0",
+    "source-map-support": "^0.5.19",
+    "ts-node": "^10.0.0",
+    "typescript": "^4.3.2"
   },
   "dependencies": {
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "socket.io": "^4.1.2"
+  },
+  "nyc": {
+    "extension": [
+      ".ts",
+      ".tsx"
+    ],
+    "exclude": [
+      "**/*.d.ts"
+    ],
+    "reporter": [
+      "html"
+    ],
+    "all": true
   }
 }

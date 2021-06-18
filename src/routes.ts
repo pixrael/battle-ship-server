@@ -7,11 +7,14 @@ router.get('/', (req, res) => {
 })
 
 // Game page route.
-router.post('/game', (req, res) => {
+router.post('/games', (req, res) => {
   // should create a new game and add it to the list of games
-  const { battleName } = req.body
 
-  res.send(`create a game ${battleName}`)
+  const response = {
+    gameId: 1234,
+  }
+
+  res.send(JSON.stringify(response))
 })
 
 module.exports = router

@@ -19,13 +19,13 @@ export enum SHIP_STATUS {
 import { Coordinate } from './battle'
 
 export class Ship {
-    type: SHIP_TYPE
-    length: number
-    orientation: SHIP_ORIENTATION
-    hit: Number[]
-    status: SHIP_STATUS
+    private type: SHIP_TYPE
+    private length: number
+    private orientation: SHIP_ORIENTATION
+    private hit: Number[]
+    private status: SHIP_STATUS
 
-    constructor(type: SHIP_TYPE, orientation: SHIP_ORIENTATION) {
+    constructor(type: SHIP_TYPE) {
         this.type = type
 
         if (type === SHIP_TYPE.S4L) this.length = 4
@@ -33,7 +33,7 @@ export class Ship {
         if (type === SHIP_TYPE.S2L) this.length = 2
         if (type === SHIP_TYPE.S1L) this.length = 1
 
-        this.orientation = orientation
+        this.orientation = SHIP_ORIENTATION.HORIZONTAL
         this.hit = []
         this.status = SHIP_STATUS.PERFECT
     }

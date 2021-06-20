@@ -1,3 +1,5 @@
+import { SHIP_TYPE, Ship } from './ship'
+
 export enum BATTLE_STATUS {
     IN_PROGRESS = 'IN_PROGRESS',
     GAME_OVER = 'GAME_OVER',
@@ -15,20 +17,13 @@ export class Coordinate {
     y: number
 }
 
-export class Ship {
-    name: string
-    position: Coordinate[]
-    hitted: Coordinate[]
-    status = BATTLE_STATUS.IN_PROGRESS
-}
-
 export class Battle {
-    battleId: string
-    mode: string
-    nAttemps: number
-    status: string
-    ships: Ship[] = []
-    hitValue: number
+    private battleId: string
+    private mode: string
+    private nAttemps: number
+    private status: string
+    private ships: Ship[] = []
+    private hitValue: number
 
     constructor(battleId: string, mode: BATTLE_MODES, nAttemps?: number) {
         this.battleId = battleId
@@ -50,7 +45,24 @@ export class Battle {
         }
     }
 
-    setInitalRandomShipPositions() {}
+    setInitalRandomShipPositions() {
+        const typesCreate = [
+            SHIP_TYPE.S4L, // 4 spaces long
+            SHIP_TYPE.S3L,
+            SHIP_TYPE.S3L, // 3 spaces long
+            SHIP_TYPE.S2L,
+            SHIP_TYPE.S2L,
+            SHIP_TYPE.S2L, // 2 spaces long
+            SHIP_TYPE.S1L,
+            SHIP_TYPE.S1L,
+            SHIP_TYPE.S1L,
+            SHIP_TYPE.S1L, // 1 spaces long
+        ]
+
+        this.ships = typesCreate.map((type) => new Ship(type))
+
+        ///TODO  placing ships:
+    }
 
     getFullState() {
         return {

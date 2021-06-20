@@ -1,6 +1,6 @@
 import { Coordinate } from './battle'
 import { Ship, SHIP_ORIENTATION, SHIP_TYPE } from './ship'
-import { randomBetween } from '../../utils/random'
+import * as Random from '../../utils/random'
 
 export enum BOARD_CELL {
     S4L_PART = 4, //cell with a part of a S4L never hit
@@ -29,19 +29,21 @@ export class Board {
     private width: number
     private height: number
     private ships: Ship[] = []
-    private board: number[][]
+    private board: number[][] = []
     private maxTries = 100
 
     constructor(width: number, height: number) {
         this.width = width
         this.height = height
 
-        this.board = [[width], [height]]
-
         for (let i = 0; i < width; i++) {
+            const row = []
+
             for (let j = 0; j < height; j++) {
-                this.board[i][j] = BOARD_CELL.SEA
+                row.push(BOARD_CELL.SEA)
             }
+
+            this.board.push(row)
         }
     }
 
@@ -49,7 +51,13 @@ export class Board {
         return {
             width: this.width,
             height: this.height,
+            board: this.board,
         }
+    }
+
+    //for test sinon
+    testFunc() {
+        console.log('random=> ', Random.randomBetween(0, 1))
     }
 
     placeShips(shipsTypes: SHIP_TYPE[]) {
@@ -59,7 +67,8 @@ export class Board {
             const ship = this.ships[i]
 
             let orientation = SHIP_ORIENTATION.HORIZONTAL
-            if (randomBetween(0, 1)) orientation = SHIP_ORIENTATION.VERTICAL
+            if (Random.randomBetween(0, 1))
+                orientation = SHIP_ORIENTATION.VERTICAL
 
             ship.setOrientation(orientation)
 
@@ -75,8 +84,8 @@ export class Board {
             let canBePlaced = false
             const marked = []
             while (!canBePlaced) {
-                let posX = randomBetween(0, limitRandomX)
-                let posY = randomBetween(0, limitRandomY)
+                let posX = Random.randomBetween(0, limitRandomX)
+                let posY = Random.randomBetween(0, limitRandomY)
                 pos = { x: posX, y: posY }
 
                 canBePlaced =

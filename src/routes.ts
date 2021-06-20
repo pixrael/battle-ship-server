@@ -11,7 +11,7 @@ router.post('/games', (req, res) => {
   // should create a new game and add it to the list of games
 
   const response = {
-    gameId: 1234,
+    battleId: 1234,
   }
 
   res.send(JSON.stringify(response))

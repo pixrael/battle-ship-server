@@ -47,4 +47,20 @@ export class Ship {
             status: this.status,
         }
     }
+
+    getLength() {
+        return this.length
+    }
+
+    setOrientation(orientation: SHIP_ORIENTATION) {
+        this.orientation = orientation
+    }
+
+    getOrientation() {
+        return this.orientation
+    }
+
+    getType() {
+        return this.type
+    }
 }

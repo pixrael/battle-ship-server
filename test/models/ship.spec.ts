@@ -17,6 +17,7 @@ describe('Instancing right ship', () => {
                 orientation: SHIP_ORIENTATION.HORIZONTAL,
                 hit: [],
                 status: SHIP_STATUS.PERFECT,
+                position: { r: 0, c: 0 },
             }
             assert.deepEqual(ship.getFullState(), expectedShip)
         })
@@ -32,6 +33,7 @@ describe('Instancing right ship', () => {
                 orientation: SHIP_ORIENTATION.HORIZONTAL,
                 hit: [],
                 status: SHIP_STATUS.PERFECT,
+                position: { r: 0, c: 0 },
             }
             assert.deepEqual(ship.getFullState(), expectedShip)
         })
@@ -47,6 +49,7 @@ describe('Instancing right ship', () => {
                 orientation: SHIP_ORIENTATION.HORIZONTAL,
                 hit: [],
                 status: SHIP_STATUS.PERFECT,
+                position: { r: 0, c: 0 },
             }
             assert.deepEqual(ship.getFullState(), expectedShip)
         })
@@ -62,6 +65,7 @@ describe('Instancing right ship', () => {
                 orientation: SHIP_ORIENTATION.HORIZONTAL,
                 hit: [],
                 status: SHIP_STATUS.PERFECT,
+                position: { r: 0, c: 0 },
             }
             assert.deepEqual(ship.getFullState(), expectedShip)
         })

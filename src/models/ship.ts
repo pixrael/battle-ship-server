@@ -24,6 +24,7 @@ export class Ship {
     private orientation: SHIP_ORIENTATION
     private hit: Number[]
     private status: SHIP_STATUS
+    private position: Coordinate
 
     constructor(type: SHIP_TYPE) {
         this.type = type
@@ -36,6 +37,7 @@ export class Ship {
         this.orientation = SHIP_ORIENTATION.HORIZONTAL
         this.hit = []
         this.status = SHIP_STATUS.PERFECT
+        this.position = { r: 0, c: 0 }
     }
 
     getFullState() {
@@ -45,6 +47,7 @@ export class Ship {
             orientation: this.orientation,
             hit: this.hit,
             status: this.status,
+            position: this.position,
         }
     }
 
@@ -56,8 +59,16 @@ export class Ship {
         this.orientation = orientation
     }
 
+    setPosition(position: Coordinate) {
+        this.position = position
+    }
+
     getOrientation() {
         return this.orientation
+    }
+
+    getPosition() {
+        return this.position
     }
 
     getType() {

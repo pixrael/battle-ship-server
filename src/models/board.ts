@@ -57,94 +57,64 @@ export class Board {
     }
 
     placeShips(ships: Ship[]) {
-        let shipsToBePlaced = []
         let nTries = 0
-        let loadPreconfig = false
         for (let i = 0; i < ships.length; i++) {
             const ship = ships[i]
-
-            let pos: Coordinate
             let canBePlaced = false
             const marked = []
-            while (!canBePlaced) {
-                let orientation = SHIP_ORIENTATION.HORIZONTAL
-                if (Random.randomBetween(0, 1))
-                    orientation = SHIP_ORIENTATION.VERTICAL
 
+            while (!canBePlaced) {
+                const { position, orientation } =
+                    this.calculateRandomPositionAndOrientation(ship.getLength())
+
+                ship.setPosition(position)
                 ship.setOrientation(orientation)
 
-                let limitRandomX = this.width - ship.getLength()
-                let limitRandomY = this.height
+                const isRepeated = this.isRepeatedCollidePosition(
+                    marked,
+                    ship.getPosition(),
+                    ship.getOrientation()
+                )
 
-                if (orientation === SHIP_ORIENTATION.VERTICAL) {
-                    limitRandomX = this.width
-                    limitRandomY = this.height - ship.getLength()
-                }
-
-                let posR = Random.randomBetween(0, limitRandomX)
-                let posC = Random.randomBetween(0, limitRandomY)
-                pos = { r: posR, c: posC }
-
-                const isAlreadyCheckedAndCollides =
-                    this.alreadyCheckedAndCollides(marked, pos, orientation)
-
-                if (isAlreadyCheckedAndCollides) {
+                if (isRepeated) {
                     canBePlaced = false
                     nTries++
                     if (nTries === this.maxTries) {
-                        this.placePreconfigShipDistribution()
-                        nTries = 0
-                        i = 0
-                        loadPreconfig = true
-
                         break
                     }
                 } else {
-                    const isColliding = this.isCollidingWithOtherShip(
-                        pos,
+                    canBePlaced = !this.isCollidingWithOtherShip(
+                        ship.getPosition(),
                         ship,
                         this.board
                     )
 
-                    if (isColliding) {
-                        marked.push({ pos, orientation })
+                    if (!canBePlaced) {
+                        marked.push({
+                            pos: ship.getPosition(),
+                            orientation: ship.getOrientation(),
+                        })
                         canBePlaced = false
                         nTries++
 
                         if (nTries === this.maxTries) {
-                            this.placePreconfigShipDistribution()
-                            nTries = 0
-                            i = 0
-                            loadPreconfig = true
                             break
                         }
-                    } else {
-                        //at this point this orientation and position not collides
-                        canBePlaced = true
                     }
                 }
             }
 
-            if (!loadPreconfig) {
-                //At this point that ship can be place cause it doesnt collide with other ship
-                shipsToBePlaced.push({
-                    position: pos,
-                    length: ship.getLength(),
-                    orientation: ship.getOrientation(),
-                    type: ship.getType(),
-                })
-
-                //placing the ships in the board
-                shipsToBePlaced.forEach((ship) => {
-                    this.placeShip(
-                        ship.position,
-                        ship.length,
-                        ship.orientation,
-                        ship.type,
-                        this.board
-                    )
-                })
+            if (canBePlaced) {
+                this.placeShip(
+                    ship.getPosition(),
+                    ship.getLength(),
+                    ship.getOrientation(),
+                    ship.getType(),
+                    this.board
+                )
             } else {
+                //At this point should load a preconfig
+                this.placePreconfigShipDistribution()
                 break
             }
         }
@@ -168,7 +138,24 @@ export class Board {
         this.maxTries = maxTries
     }
 
-    private alreadyCheckedAndCollides(
+    private calculateRandomPositionAndOrientation(shipLength: number) {
+        let orientation = SHIP_ORIENTATION.HORIZONTAL
+        if (Random.randomBetween(0, 1)) orientation = SHIP_ORIENTATION.VERTICAL
+
+        let limitRandomX = this.width - shipLength
+        let limitRandomY = this.height
+
+        if (orientation === SHIP_ORIENTATION.VERTICAL) {
+            limitRandomX = this.width
+            limitRandomY = this.height - shipLength
+        }
+
+        const r = Random.randomBetween(0, limitRandomX)
+        const c = Random.randomBetween(0, limitRandomY)
+        return { orientation, position: { r, c } }
+    }
+
+    private isRepeatedCollidePosition(
         marked: {
             pos: Coordinate
             orientation: SHIP_ORIENTATION
@@ -227,14 +214,14 @@ export class Board {
     private placeShip(
         position: Coordinate,
         shipLength: number,
-        shipPrientation: SHIP_ORIENTATION,
+        shipOrientation: SHIP_ORIENTATION,
         shipType: SHIP_TYPE,
         board: number[][]
     ) {
         for (let i = 0; i < shipLength; i++) {
             let realPos
 
-            if (shipPrientation === SHIP_ORIENTATION.VERTICAL) {
+            if (shipOrientation === SHIP_ORIENTATION.VERTICAL) {
                 realPos = position.r + i
                 board[realPos][position.c] =
                     this.getBoardCellFromShipPart(shipType)

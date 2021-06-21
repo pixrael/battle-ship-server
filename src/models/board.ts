@@ -1,6 +1,7 @@
 import { Coordinate } from './battle'
 import { Ship, SHIP_ORIENTATION, SHIP_TYPE } from './ship'
 import * as Random from '../../utils/random'
+import { preConfig10x10Board_1 } from '../../test/models/preconfig-boards/preconfig-boards'
 
 export enum BOARD_CELL {
     S4L_PART = 4, //cell with a part of a S4L never hit
@@ -58,73 +59,95 @@ export class Board {
     placeShips(ships: Ship[]) {
         let shipsToBePlaced = []
         let nTries = 0
+        let loadPreconfig = false
         for (let i = 0; i < ships.length; i++) {
             const ship = ships[i]
-
-            let orientation = SHIP_ORIENTATION.HORIZONTAL
-            if (Random.randomBetween(0, 1))
-                orientation = SHIP_ORIENTATION.VERTICAL
-
-            ship.setOrientation(orientation)
-
-            let limitRandomX = this.width - ship.getLength()
-            let limitRandomY = this.height
-
-            if (orientation === SHIP_ORIENTATION.VERTICAL) {
-                limitRandomX = this.width
-                limitRandomY = this.height - ship.getLength()
-            }
 
             let pos: Coordinate
             let canBePlaced = false
             const marked = []
             while (!canBePlaced) {
+                let orientation = SHIP_ORIENTATION.HORIZONTAL
+                if (Random.randomBetween(0, 1))
+                    orientation = SHIP_ORIENTATION.VERTICAL
+
+                ship.setOrientation(orientation)
+
+                let limitRandomX = this.width - ship.getLength()
+                let limitRandomY = this.height
+
+                if (orientation === SHIP_ORIENTATION.VERTICAL) {
+                    limitRandomX = this.width
+                    limitRandomY = this.height - ship.getLength()
+                }
+
                 let posR = Random.randomBetween(0, limitRandomX)
                 let posC = Random.randomBetween(0, limitRandomY)
                 pos = { r: posR, c: posC }
 
-                canBePlaced =
-                    !marked.some(
-                        (mPos) => mPos.r === pos.r && mPos.c === pos.c
-                    ) && !this.collidesWithOtherShip(pos, ship, this.board)
+                const isAlreadyCheckedAndCollides =
+                    this.alreadyCheckedAndCollides(marked, pos, orientation)
 
-                if (
-                    !canBePlaced &&
-                    !marked.some((mPos) => mPos.r === pos.r && mPos.c === pos.c)
-                ) {
-                    marked.push(pos)
-                }
+                if (isAlreadyCheckedAndCollides) {
+                    canBePlaced = false
+                    nTries++
+                    if (nTries === this.maxTries) {
+                        this.placePreconfigShipDistribution()
+                        nTries = 0
+                        i = 0
+                        loadPreconfig = true
 
-                nTries++
+                        break
+                    }
+                } else {
+                    const isColliding = this.isCollidingWithOtherShip(
+                        pos,
+                        ship,
+                        this.board
+                    )
 
-                if (nTries === this.maxTries) {
-                    shipsToBePlaced = [] // add preconfigured positions
-                    nTries = 0
-                    i = 0
-                    break
+                    if (isColliding) {
+                        marked.push({ pos, orientation })
+                        canBePlaced = false
+                        nTries++
+
+                        if (nTries === this.maxTries) {
+                            this.placePreconfigShipDistribution()
+                            nTries = 0
+                            i = 0
+                            loadPreconfig = true
+                            break
+                        }
+                    } else {
+                        //at this point this orientation and position not collides
+                        canBePlaced = true
+                    }
                 }
             }
 
-            //At this point that ship can be place cause it doesnt collide with other ship
-            shipsToBePlaced.push({
-                position: pos,
-                length: ship.getLength(),
-                orientation: ship.getOrientation(),
-                type: ship.getType(),
-            })
+            if (!loadPreconfig) {
+                //At this point that ship can be place cause it doesnt collide with other ship
+                shipsToBePlaced.push({
+                    position: pos,
+                    length: ship.getLength(),
+                    orientation: ship.getOrientation(),
+                    type: ship.getType(),
+                })
 
-            //placing the ships in the board
-            shipsToBePlaced.forEach((ship) => {
-                this.placeShip(
-                    ship.position,
-                    ship.length,
-                    ship.orientation,
-                    ship.type,
-                    this.board
-                )
-            })
+                //placing the ships in the board
+                shipsToBePlaced.forEach((ship) => {
+                    this.placeShip(
+                        ship.position,
+                        ship.length,
+                        ship.orientation,
+                        ship.type,
+                        this.board
+                    )
+                })
+            } else {
+                break
+            }
         }
-
         //take first ship
         //select random orientation that is not a marked position
         //if horizontal
@@ -139,6 +162,26 @@ export class Board {
 
     getBoard() {
         return this.board
+    }
+
+    setMaxTries(maxTries: number) {
+        this.maxTries = maxTries
+    }
+
+    private alreadyCheckedAndCollides(
+        marked: {
+            pos: Coordinate
+            orientation: SHIP_ORIENTATION
+        }[],
+        pos: Coordinate,
+        orientation: SHIP_ORIENTATION
+    ) {
+        return marked.some(
+            (mark) =>
+                mark.orientation === orientation &&
+                mark.pos.r === pos.r &&
+                mark.pos.c === pos.c
+        )
     }
 
     private isInsideBoardLimits(
@@ -156,7 +199,7 @@ export class Board {
         return pos >= 0 && pos <= boardWH - shipLong
     }
 
-    private collidesWithOtherShip(
+    private isCollidingWithOtherShip(
         position: Coordinate,
         ship: Ship,
         board: number[][]
@@ -199,6 +242,14 @@ export class Board {
                 realPos = position.c + i
                 board[position.r][realPos] =
                     this.getBoardCellFromShipPart(shipType)
+            }
+        }
+    }
+
+    private placePreconfigShipDistribution() {
+        for (let i = 0; i < preConfig10x10Board_1.length; i++) {
+            for (let j = 0; j < preConfig10x10Board_1[0].length; j++) {
+                this.board[i][j] = preConfig10x10Board_1[i][j]
             }
         }
     }

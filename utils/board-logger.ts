@@ -5,7 +5,12 @@ export const boardLogger = (board: any[][], pathFile: string) => {
 
     for (let i = 0; i < board.length; i++) {
         for (let j = 0; j < board[0].length; j++) {
-            boardString += board[i][j] + ','
+            if (j == 0) boardString += '['
+
+            boardString += ' ' + board[i][j]
+
+            if (j == board[0].length - 1) boardString += '],'
+            else boardString += ' ,'
         }
 
         boardString += '\n'

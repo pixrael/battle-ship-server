@@ -13,8 +13,8 @@ export enum BATTLE_MODES {
 }
 
 export class Coordinate {
-    x: number
-    y: number
+    r: number
+    c: number
 }
 
 export class Battle {

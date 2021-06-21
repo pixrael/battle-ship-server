@@ -55,16 +55,11 @@ export class Board {
         }
     }
 
-    //for test sinon
-    testFunc() {
-        console.log('random=> ', Random.randomBetween(0, 1))
-    }
-
-    placeShips(shipsTypes: SHIP_TYPE[]) {
+    placeShips(ships: Ship[]) {
         let shipsToBePlaced = []
         let nTries = 0
-        for (let i = 0; i < this.ships.length; i++) {
-            const ship = this.ships[i]
+        for (let i = 0; i < ships.length; i++) {
+            const ship = ships[i]
 
             let orientation = SHIP_ORIENTATION.HORIZONTAL
             if (Random.randomBetween(0, 1))
@@ -84,18 +79,18 @@ export class Board {
             let canBePlaced = false
             const marked = []
             while (!canBePlaced) {
-                let posX = Random.randomBetween(0, limitRandomX)
-                let posY = Random.randomBetween(0, limitRandomY)
-                pos = { x: posX, y: posY }
+                let posR = Random.randomBetween(0, limitRandomX)
+                let posC = Random.randomBetween(0, limitRandomY)
+                pos = { r: posR, c: posC }
 
                 canBePlaced =
                     !marked.some(
-                        (mPos) => mPos.x === pos.x && mPos.y === pos.y
+                        (mPos) => mPos.r === pos.r && mPos.c === pos.c
                     ) && !this.collidesWithOtherShip(pos, ship, this.board)
 
                 if (
                     !canBePlaced &&
-                    !marked.some((mPos) => mPos.x === pos.x && mPos.y === pos.y)
+                    !marked.some((mPos) => mPos.r === pos.r && mPos.c === pos.c)
                 ) {
                     marked.push(pos)
                 }
@@ -117,18 +112,18 @@ export class Board {
                 orientation: ship.getOrientation(),
                 type: ship.getType(),
             })
-        }
 
-        //placing the ships in the board
-        shipsToBePlaced.forEach((ship) => {
-            this.placeShip(
-                ship.position,
-                ship.length,
-                ship.orientation,
-                ship.type,
-                this.board
-            )
-        })
+            //placing the ships in the board
+            shipsToBePlaced.forEach((ship) => {
+                this.placeShip(
+                    ship.position,
+                    ship.length,
+                    ship.orientation,
+                    ship.type,
+                    this.board
+                )
+            })
+        }
 
         //take first ship
         //select random orientation that is not a marked position
@@ -140,6 +135,10 @@ export class Board {
         //if there is conflict then, mark that position and start the process from the begining
         //if there is not conflict then place the ship there and continue with the next one and clear the marked positions
         //if there is the 10 startover the select a preconfigured ship placements
+    }
+
+    getBoard() {
+        return this.board
     }
 
     private isInsideBoardLimits(
@@ -168,12 +167,12 @@ export class Board {
         for (let i = 0; i < shipLength; i++) {
             let realPos
 
-            if (ship.getOrientation() === SHIP_ORIENTATION.HORIZONTAL) {
-                realPos = position.x + i
-                collides = board[realPos][position.y] !== BOARD_CELL.SEA
+            if (ship.getOrientation() === SHIP_ORIENTATION.VERTICAL) {
+                realPos = position.r + i
+                collides = board[realPos][position.c] !== BOARD_CELL.SEA
             } else {
-                realPos = position.y + i
-                collides = board[position.x][realPos] !== BOARD_CELL.SEA
+                realPos = position.c + i
+                collides = board[position.r][realPos] !== BOARD_CELL.SEA
             }
 
             if (collides) break
@@ -192,13 +191,13 @@ export class Board {
         for (let i = 0; i < shipLength; i++) {
             let realPos
 
-            if (shipPrientation === SHIP_ORIENTATION.HORIZONTAL) {
-                realPos = position.x + i
-                board[realPos][position.y] =
+            if (shipPrientation === SHIP_ORIENTATION.VERTICAL) {
+                realPos = position.r + i
+                board[realPos][position.c] =
                     this.getBoardCellFromShipPart(shipType)
             } else {
-                realPos = position.y + i
-                board[position.x][realPos] =
+                realPos = position.c + i
+                board[position.r][realPos] =
                     this.getBoardCellFromShipPart(shipType)
             }
         }

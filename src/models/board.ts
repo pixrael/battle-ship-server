@@ -31,6 +31,7 @@ export class Board {
     private height: number
     private ships: Ship[] = []
     private board: number[][] = []
+    private clientBoard: number[][] = []
     private maxTries = 100
 
     constructor(width: number, height: number) {
@@ -39,12 +40,14 @@ export class Board {
 
         for (let i = 0; i < width; i++) {
             const row = []
-
+            const row2 = []
             for (let j = 0; j < height; j++) {
                 row.push(BOARD_CELL.SEA)
+                row2.push(BOARD_CELL.SEA)
             }
 
             this.board.push(row)
+            this.clientBoard.push(row2)
         }
     }
 
@@ -136,6 +139,10 @@ export class Board {
 
     setMaxTries(maxTries: number) {
         this.maxTries = maxTries
+    }
+
+    getClientBoard() {
+        return this.clientBoard
     }
 
     private calculateRandomPositionAndOrientation(shipLength: number) {

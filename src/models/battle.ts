@@ -1,3 +1,4 @@
+import { Board } from './board'
 import { SHIP_TYPE, Ship } from './ship'
 
 export enum BATTLE_STATUS {
@@ -24,6 +25,7 @@ export class Battle {
     private status: string
     private ships: Ship[] = []
     private hitValue: number
+    private board: Board
 
     constructor(battleId: string, mode: BATTLE_MODES, nAttemps?: number) {
         this.battleId = battleId
@@ -60,8 +62,8 @@ export class Battle {
         ]
 
         this.ships = typesCreate.map((type) => new Ship(type))
-
-        ///TODO  placing ships:
+        this.board = new Board(10, 10)
+        this.board.placeShips(this.ships)
     }
 
     getFullState() {
@@ -72,6 +74,12 @@ export class Battle {
             status: this.status,
             ships: this.ships,
             hitValue: this.hitValue,
+        }
+    }
+
+    getClientState() {
+        return {
+            board: this.board.getClientBoard(),
         }
     }
 }

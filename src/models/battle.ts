@@ -1,4 +1,4 @@
-import { Board } from './board'
+import { Board, BOARD_CELL } from './board'
 import { SHIP_TYPE, Ship } from './ship'
 
 export enum BATTLE_STATUS {
@@ -80,6 +80,25 @@ export class Battle {
     getClientState() {
         return {
             board: this.board.getClientBoard(),
+        }
+    }
+
+    shot(row: number, column: number) {
+        if (this.board.getBoard()[row][column] === BOARD_CELL.SEA) {
+            this.board.setCell(row, column, BOARD_CELL.MISS)
+            this.board.setClientCell(row, column, BOARD_CELL.MISS)
+        } else if (this.board.getBoard()[row][column] === BOARD_CELL.S4L_PART) {
+            this.board.setCell(row, column, BOARD_CELL.S4L_HIT)
+            this.board.setClientCell(row, column, BOARD_CELL.S4L_HIT)
+        } else if (this.board.getBoard()[row][column] === BOARD_CELL.S3L_PART) {
+            this.board.setCell(row, column, BOARD_CELL.S3L_HIT)
+            this.board.setClientCell(row, column, BOARD_CELL.S3L_HIT)
+        } else if (this.board.getBoard()[row][column] === BOARD_CELL.S2L_PART) {
+            this.board.setCell(row, column, BOARD_CELL.S2L_HIT)
+            this.board.setClientCell(row, column, BOARD_CELL.S2L_HIT)
+        } else if (this.board.getBoard()[row][column] === BOARD_CELL.S1L_PART) {
+            this.board.setCell(row, column, BOARD_CELL.S1L_DES)
+            this.board.setClientCell(row, column, BOARD_CELL.S1L_DES)
         }
     }
 }

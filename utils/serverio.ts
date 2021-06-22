@@ -2,7 +2,7 @@ import { Battle, BATTLE_MODES } from '../src/models/battle'
 
 const socketio = require('socket.io')
 
-let battle
+let battle: Battle
 
 function initSocket(server, origin) {
     const io = socketio(server, {
@@ -20,6 +20,12 @@ function initSocket(server, origin) {
             battle.setInitalRandomShipPositions()
             const initialState = battle.getClientState()
             socket.emit('joined', initialState)
+        })
+
+        socket.on('shot', ({ row, column }) => {
+            battle.shot(row, column)
+            const state = battle.getClientState()
+            socket.emit('current-state', state)
         })
     })
 }

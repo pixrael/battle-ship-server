@@ -121,16 +121,6 @@ export class Board {
                 break
             }
         }
-        //take first ship
-        //select random orientation that is not a marked position
-        //if horizontal
-        //select ship.position.x between [0,this.width-ship.long]
-        //if vertical
-        //select ship.position.y between [0,this.height-ship.long]
-        //check if in that position there is not conflict in any of the parts of the ship with other ship
-        //if there is conflict then, mark that position and start the process from the begining
-        //if there is not conflict then place the ship there and continue with the next one and clear the marked positions
-        //if there is the 10 startover the select a preconfigured ship placements
     }
 
     getBoard() {
@@ -143,6 +133,14 @@ export class Board {
 
     getClientBoard() {
         return this.clientBoard
+    }
+
+    setCell(row: number, column: number, cell: BOARD_CELL) {
+        this.board[row][column] = cell
+    }
+
+    setClientCell(row: number, column: number, cell: BOARD_CELL) {
+        this.clientBoard[row][column] = cell
     }
 
     private calculateRandomPositionAndOrientation(shipLength: number) {

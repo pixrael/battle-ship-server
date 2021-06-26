@@ -18,6 +18,13 @@
         "import/newline-after-import": "off",
         "import/no-unresolved": "off",
         "import/extensions": "off",
-        "indent": "off"
+        "indent": "off",
+        "no-plusplus": "off",
+        "object-curly-newline": "off",
+        "lines-between-class-members": "off",
+        "implicit-arrow-linebreak": "off",
+        "operator-linebreak": "off",
+        "comma-dangle": "off",
+        "max-classes-per-file": "off"
     }
 }

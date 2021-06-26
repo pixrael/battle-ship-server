@@ -10,7 +10,7 @@ import {
     config410x10Board,
     config510x10Board,
     config610x10Board,
-    preConfig10x10Board_1,
+    preConfig10x10Board1,
 } from '../models/preconfig-boards/preconfig-boards'
 import * as Random from '../../utils/random'
 import { Ship, SHIP_TYPE } from '../../src/models/ship'
@@ -208,7 +208,7 @@ describe('Board', () => {
 
             boardLogger(board.getBoard(), './logs/boardResult.txt')
 
-            assert.deepEqual(board.getBoard(), preConfig10x10Board_1)
+            assert.deepEqual(board.getBoard(), preConfig10x10Board1)
         })
 
         const setRandomBetweenCalls = (stub, pos, nCalls) => {

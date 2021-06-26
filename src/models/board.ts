@@ -1,8 +1,9 @@
 import { Coordinate } from './battle'
 import { Ship, SHIP_ORIENTATION, SHIP_TYPE } from './ship'
 import * as Random from '../../utils/random'
-import { preConfig10x10Board_1 } from '../../test/models/preconfig-boards/preconfig-boards'
+import { preConfig10x10Board1 } from '../../test/models/preconfig-boards/preconfig-boards'
 
+// eslint-disable-next-line no-shadow
 export enum BOARD_CELL {
     S4L_PART = 4, //cell with a part of a S4L never hit
     S3L_PART = 3, //cell with a part of a S3L never hit
@@ -18,12 +19,6 @@ export enum BOARD_CELL {
     S1L_DES = -10, //cell with a part of a S1L already destroyed
     SEA = 0, //no ship and no hit yet
     MISS = -100, //no ship and no hit yet
-}
-
-type ShipPositionModel = {
-    position: Coordinate
-    lengthShip: number
-    typeShip: SHIP_TYPE
 }
 
 export class Board {
@@ -73,7 +68,7 @@ export class Board {
                 ship.setPosition(position)
                 ship.setOrientation(orientation)
 
-                const isRepeated = this.isRepeatedCollidePosition(
+                const isRepeated = Board.isRepeatedCollidePosition(
                     marked,
                     ship.getPosition(),
                     ship.getOrientation()
@@ -86,7 +81,7 @@ export class Board {
                         break
                     }
                 } else {
-                    canBePlaced = !this.isCollidingWithOtherShip(
+                    canBePlaced = !Board.isCollidingWithOtherShip(
                         ship.getPosition(),
                         ship,
                         this.board
@@ -108,7 +103,7 @@ export class Board {
             }
 
             if (canBePlaced) {
-                this.placeShip(
+                Board.placeShip(
                     ship.getPosition(),
                     ship.getLength(),
                     ship.getOrientation(),
@@ -116,7 +111,7 @@ export class Board {
                     this.board
                 )
             } else {
-                //At this point should load a preconfig
+                // At this point should load a preconfig
                 this.placePreconfigShipDistribution()
                 break
             }
@@ -160,7 +155,7 @@ export class Board {
         return { orientation, position: { r, c } }
     }
 
-    private isRepeatedCollidePosition(
+    static isRepeatedCollidePosition(
         marked: {
             pos: Coordinate
             orientation: SHIP_ORIENTATION
@@ -176,22 +171,7 @@ export class Board {
         )
     }
 
-    private isInsideBoardLimits(
-        pos: number,
-        shipLong: number,
-        orientation: SHIP_ORIENTATION,
-        widthBoard: number,
-        heightBoard: number
-    ) {
-        let boardWH = heightBoard
-        if (orientation === SHIP_ORIENTATION.HORIZONTAL) {
-            boardWH = widthBoard
-        }
-
-        return pos >= 0 && pos <= boardWH - shipLong
-    }
-
-    private isCollidingWithOtherShip(
+    static isCollidingWithOtherShip(
         position: Coordinate,
         ship: Ship,
         board: number[][]
@@ -216,40 +196,48 @@ export class Board {
         return collides
     }
 
-    private placeShip(
+    static placeShip(
         position: Coordinate,
         shipLength: number,
         shipOrientation: SHIP_ORIENTATION,
         shipType: SHIP_TYPE,
-        board: number[][]
+        board:
+            | BOARD_CELL.S4L_PART[][]
+            | BOARD_CELL.S3L_PART[][]
+            | BOARD_CELL.S2L_PART[][]
+            | BOARD_CELL.S1L_PART[][]
     ) {
         for (let i = 0; i < shipLength; i++) {
             let realPos
 
             if (shipOrientation === SHIP_ORIENTATION.VERTICAL) {
                 realPos = position.r + i
+                // eslint-disable-next-line no-param-reassign
                 board[realPos][position.c] =
-                    this.getBoardCellFromShipPart(shipType)
+                    Board.getBoardCellFromShipPart(shipType)
             } else {
                 realPos = position.c + i
+                // eslint-disable-next-line no-param-reassign
                 board[position.r][realPos] =
-                    this.getBoardCellFromShipPart(shipType)
+                    Board.getBoardCellFromShipPart(shipType)
             }
         }
     }
 
     private placePreconfigShipDistribution() {
-        for (let i = 0; i < preConfig10x10Board_1.length; i++) {
-            for (let j = 0; j < preConfig10x10Board_1[0].length; j++) {
-                this.board[i][j] = preConfig10x10Board_1[i][j]
+        for (let i = 0; i < preConfig10x10Board1.length; i++) {
+            for (let j = 0; j < preConfig10x10Board1[0].length; j++) {
+                this.board[i][j] = preConfig10x10Board1[i][j]
             }
         }
     }
 
-    private getBoardCellFromShipPart(type: SHIP_TYPE) {
+    static getBoardCellFromShipPart(type: SHIP_TYPE) {
         if (type === SHIP_TYPE.S4L) return BOARD_CELL.S4L_PART
         if (type === SHIP_TYPE.S3L) return BOARD_CELL.S3L_PART
         if (type === SHIP_TYPE.S2L) return BOARD_CELL.S2L_PART
         if (type === SHIP_TYPE.S1L) return BOARD_CELL.S1L_PART
+
+        return BOARD_CELL.S4L_PART
     }
 }

@@ -91,7 +91,7 @@ export const config610x10Board = [
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
 ]
 
-export const preConfig10x10Board_1 = [
+export const preConfig10x10Board1 = [
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 3, 3, 3, 0, 1, 0, 0, 0], //s3l hor 1, 2 s1l hor 1,6
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],

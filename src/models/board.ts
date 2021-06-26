@@ -134,8 +134,44 @@ export class Board {
         this.board[row][column] = cell
     }
 
+    setCells(
+        intialPosition: Coordinate,
+        orientation: SHIP_ORIENTATION,
+        nCells: number,
+        newValue: BOARD_CELL
+    ) {
+        if (orientation === SHIP_ORIENTATION.HORIZONTAL) {
+            for (let i = 0; i < nCells; i++) {
+                this.board[intialPosition.r][intialPosition.c + i] = newValue
+            }
+        } else {
+            for (let i = 0; i < nCells; i++) {
+                this.board[intialPosition.r + i][intialPosition.c] = newValue
+            }
+        }
+    }
+
     setClientCell(row: number, column: number, cell: BOARD_CELL) {
         this.clientBoard[row][column] = cell
+    }
+
+    setClientCells(
+        intialPosition: Coordinate,
+        orientation: SHIP_ORIENTATION,
+        nCells: number,
+        newValue: BOARD_CELL
+    ) {
+        if (orientation === SHIP_ORIENTATION.HORIZONTAL) {
+            for (let i = 0; i < nCells; i++) {
+                this.clientBoard[intialPosition.r][intialPosition.c + i] =
+                    newValue
+            }
+        } else {
+            for (let i = 0; i < nCells; i++) {
+                this.clientBoard[intialPosition.r + i][intialPosition.c] =
+                    newValue
+            }
+        }
     }
 
     private calculateRandomPositionAndOrientation(shipLength: number) {

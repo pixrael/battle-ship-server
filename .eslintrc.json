@@ -25,6 +25,9 @@
         "implicit-arrow-linebreak": "off",
         "operator-linebreak": "off",
         "comma-dangle": "off",
-        "max-classes-per-file": "off"
+        "max-classes-per-file": "off",
+        "consistent-return": "off",
+        "curly": "off",
+        "nonblock-statement-body-position": "off"
     }
 }

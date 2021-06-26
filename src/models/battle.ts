@@ -1,5 +1,5 @@
 import { Board, BOARD_CELL } from './board'
-import { SHIP_TYPE, Ship } from './ship'
+import { SHIP_TYPE, Ship, SHIP_STATUS } from './ship'
 
 export enum BATTLE_STATUS {
     IN_PROGRESS = 'IN_PROGRESS',
@@ -74,6 +74,8 @@ export class Battle {
             status: this.status,
             ships: this.ships,
             hitValue: this.hitValue,
+            board: this.board.getBoard(),
+            clientBoard: this.board.getClientBoard(),
         }
     }
 
@@ -91,8 +93,27 @@ export class Battle {
             this.board.setCell(row, column, BOARD_CELL.S4L_HIT)
             this.board.setClientCell(row, column, BOARD_CELL.S4L_HIT)
         } else if (this.board.getBoard()[row][column] === BOARD_CELL.S3L_PART) {
-            this.board.setCell(row, column, BOARD_CELL.S3L_HIT)
-            this.board.setClientCell(row, column, BOARD_CELL.S3L_HIT)
+            const shipHit = this.ships.find((s) => s.isPartOfShip(row, column))
+            shipHit.increaseNReceivedHits()
+            if (shipHit.getStatus() === SHIP_STATUS.DESTROYED) {
+                const position = shipHit.getPosition()
+                this.board.setCells(
+                    position,
+                    shipHit.getOrientation(),
+                    shipHit.getLength(),
+                    BOARD_CELL.S3L_DES
+                )
+
+                this.board.setClientCells(
+                    position,
+                    shipHit.getOrientation(),
+                    shipHit.getLength(),
+                    BOARD_CELL.S3L_DES
+                )
+            } else {
+                this.board.setCell(row, column, BOARD_CELL.S3L_HIT)
+                this.board.setClientCell(row, column, BOARD_CELL.S3L_HIT)
+            }
         } else if (this.board.getBoard()[row][column] === BOARD_CELL.S2L_PART) {
             this.board.setCell(row, column, BOARD_CELL.S2L_HIT)
             this.board.setClientCell(row, column, BOARD_CELL.S2L_HIT)

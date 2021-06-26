@@ -1,4 +1,5 @@
 import { Battle, BATTLE_MODES } from '../src/models/battle'
+import { boardConsoleLogger } from './board-logger'
 
 const socketio = require('socket.io')
 
@@ -25,6 +26,7 @@ function initSocket(server, origin) {
         socket.on('shot', ({ row, column }) => {
             battle.shot(row, column)
             const state = battle.getClientState()
+            boardConsoleLogger(battle.getFullState().board)
             socket.emit('current-state', state)
         })
     })

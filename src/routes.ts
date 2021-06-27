@@ -1,4 +1,4 @@
-import * as Random from '../utils/random'
+import { gameServer } from '.'
 const express = require('express')
 const router = express.Router()
 const path = require('path')
@@ -10,9 +10,10 @@ router.get('/', (req, res) => {
 // Game page route.
 router.post('/games', (req, res) => {
     // should create a new game and add it to the list of games
+    const newGame = gameServer.createNewGame(req.body.mode, req.body['n-shots'])
 
     const response = {
-        battleId: Random.randomBetween(1000, 9999),
+        battleId: newGame.getGameId(),
     }
 
     res.send(JSON.stringify(response))

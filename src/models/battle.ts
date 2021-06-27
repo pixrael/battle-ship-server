@@ -4,6 +4,7 @@ import { SHIP_TYPE, Ship, SHIP_STATUS } from './ship'
 export enum BATTLE_STATUS {
     IN_PROGRESS = 'IN_PROGRESS',
     GAME_OVER = 'GAME_OVER',
+    GAME_WIN = 'GAME_WIN',
 }
 
 export enum BATTLE_MODES {
@@ -21,28 +22,29 @@ export class Coordinate {
 export class Battle {
     private battleId: string
     private mode: string
+    private nMaxAttemps: number
     private nAttemps: number
-    private status: string
+    private status: BATTLE_STATUS
     private ships: Ship[] = []
     private hitValue: number
     private board: Board
 
-    constructor(battleId: string, mode: BATTLE_MODES, nAttemps?: number) {
+    constructor(battleId: string, mode: BATTLE_MODES, nMaxAttemps?: number) {
         this.battleId = battleId
         this.status = BATTLE_STATUS.IN_PROGRESS
         this.hitValue = 1
-        if (nAttemps) {
+        if (nMaxAttemps) {
             this.mode = BATTLE_MODES.CUSTOM
-            this.nAttemps = nAttemps
+            this.nMaxAttemps = nMaxAttemps
         } else {
             this.mode = mode
             if (this.mode === BATTLE_MODES.EASY) {
                 this.hitValue = 0
-                this.nAttemps = 100
+                this.nMaxAttemps = 100
             } else if (this.mode === BATTLE_MODES.MEDIUM) {
-                this.nAttemps = 100
+                this.nMaxAttemps = 100
             } else if (this.mode === BATTLE_MODES.HARD) {
-                this.nAttemps = 50
+                this.nMaxAttemps = 50
             }
         }
 
@@ -71,7 +73,7 @@ export class Battle {
         return {
             battleId: this.battleId,
             mode: this.mode,
-            nAttemps: this.nAttemps,
+            nAttemps: this.nMaxAttemps,
             status: this.status,
             ships: this.ships,
             hitValue: this.hitValue,
@@ -83,6 +85,7 @@ export class Battle {
     getClientState() {
         return {
             board: this.board.getClientBoard(),
+            'batte-states': this.status,
         }
     }
 
@@ -122,6 +125,18 @@ export class Battle {
 
             this.board.setCell(row, column, newCell)
             this.board.setClientCell(row, column, newCell)
+        }
+
+        // verify finish of the game
+        if (this.ships.some((s) => s.getStatus() !== SHIP_STATUS.DESTROYED)) {
+            this.nAttemps += this.hitValue
+            if (this.nAttemps === this.nMaxAttemps) {
+                // game over, cause finished number of attemps
+                this.status = BATTLE_STATUS.GAME_OVER
+            }
+        } else {
+            // game win, cause all ships have been destroyed
+            this.status = BATTLE_STATUS.GAME_WIN
         }
     }
 

@@ -1,11 +1,9 @@
-import { Battle, BATTLE_MODES } from '../src/models/battle'
+import GamesServer from '../src/models/games-server'
 import { boardConsoleLogger } from './board-logger'
 
 const socketio = require('socket.io')
 
-let battle: Battle
-
-function initSocket(server, origin) {
+function initSocket(server, origin, gameServer: GamesServer) {
     const io = socketio(server, {
         cors: {
             origin, //TODO: depends on the environment
@@ -14,19 +12,24 @@ function initSocket(server, origin) {
     })
 
     io.on('connection', (socket) => {
-        console.log('connected !!!')
+        socket.on('join-game', ({ battleId }) => {
+            const game = gameServer.getGameById(battleId)
 
-        socket.on('join-battle', ({ battleId }) => {
-            battle = new Battle(battleId, BATTLE_MODES.EASY)
-            battle.setInitalRandomShipPositions()
-            const initialState = battle.getClientState()
-            socket.emit('joined', initialState)
+            if (!game) {
+                socket.emit('not-joined', {
+                    error: 'game with that id doenst exist',
+                })
+            } else {
+                const state = game.getBattleClientState()
+                socket.emit('joined', state)
+            }
         })
 
-        socket.on('shot', ({ row, column }) => {
-            battle.shot(row, column)
-            const state = battle.getClientState()
-            boardConsoleLogger(battle.getFullState().board)
+        socket.on('shot', ({ battleId, row, column }) => {
+            const game = gameServer.getGameById(battleId)
+            game.shot(row, column)
+            const state = game.getBattleClientState()
+            boardConsoleLogger(game.getBattleFullState().board)
             socket.emit('current-state', state)
         })
     })

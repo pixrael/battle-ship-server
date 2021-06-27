@@ -33,6 +33,7 @@ export class Battle {
         this.battleId = battleId
         this.status = BATTLE_STATUS.IN_PROGRESS
         this.hitValue = 1
+        this.nAttemps = 0
         if (nMaxAttemps) {
             this.mode = BATTLE_MODES.CUSTOM
             this.nMaxAttemps = nMaxAttemps
@@ -94,7 +95,11 @@ export class Battle {
         if (cellBoard === BOARD_CELL.SEA) {
             this.board.setCell(row, column, BOARD_CELL.MISS)
             this.board.setClientCell(row, column, BOARD_CELL.MISS)
-
+            this.nAttemps += this.hitValue
+            if (this.nAttemps === this.nMaxAttemps) {
+                // game over, cause finished number of attemps
+                this.status = BATTLE_STATUS.GAME_OVER
+            }
             return
         }
 
@@ -127,9 +132,10 @@ export class Battle {
             this.board.setClientCell(row, column, newCell)
         }
 
+        this.nAttemps += this.hitValue
+
         // verify finish of the game
         if (this.ships.some((s) => s.getStatus() !== SHIP_STATUS.DESTROYED)) {
-            this.nAttemps += this.hitValue
             if (this.nAttemps === this.nMaxAttemps) {
                 // game over, cause finished number of attemps
                 this.status = BATTLE_STATUS.GAME_OVER

@@ -30,7 +30,7 @@ describe('Board', () => {
     })
 
     describe('Placing ships', () => {
-        var sandbox
+        let sandbox
         beforeEach(function () {
             sandbox = sinon.createSandbox()
         })

@@ -45,6 +45,8 @@ export class Battle {
                 this.nAttemps = 50
             }
         }
+
+        this.board = new Board(10, 10)
     }
 
     setInitalRandomShipPositions() {
@@ -62,7 +64,6 @@ export class Battle {
         ]
 
         this.ships = typesCreate.map((type) => new Ship(type))
-        this.board = new Board(10, 10)
         this.board.placeShips(this.ships)
     }
 
@@ -86,40 +87,49 @@ export class Battle {
     }
 
     shot(row: number, column: number) {
-        if (this.board.getBoard()[row][column] === BOARD_CELL.SEA) {
+        const cellBoard = this.board.getBoard()[row][column]
+        if (cellBoard === BOARD_CELL.SEA) {
             this.board.setCell(row, column, BOARD_CELL.MISS)
             this.board.setClientCell(row, column, BOARD_CELL.MISS)
-        } else if (this.board.getBoard()[row][column] === BOARD_CELL.S4L_PART) {
-            this.board.setCell(row, column, BOARD_CELL.S4L_HIT)
-            this.board.setClientCell(row, column, BOARD_CELL.S4L_HIT)
-        } else if (this.board.getBoard()[row][column] === BOARD_CELL.S3L_PART) {
-            const shipHit = this.ships.find((s) => s.isPartOfShip(row, column))
-            shipHit.increaseNReceivedHits()
-            if (shipHit.getStatus() === SHIP_STATUS.DESTROYED) {
-                const position = shipHit.getPosition()
-                this.board.setCells(
-                    position,
-                    shipHit.getOrientation(),
-                    shipHit.getLength(),
-                    BOARD_CELL.S3L_DES
-                )
 
-                this.board.setClientCells(
-                    position,
-                    shipHit.getOrientation(),
-                    shipHit.getLength(),
-                    BOARD_CELL.S3L_DES
-                )
-            } else {
-                this.board.setCell(row, column, BOARD_CELL.S3L_HIT)
-                this.board.setClientCell(row, column, BOARD_CELL.S3L_HIT)
-            }
-        } else if (this.board.getBoard()[row][column] === BOARD_CELL.S2L_PART) {
-            this.board.setCell(row, column, BOARD_CELL.S2L_HIT)
-            this.board.setClientCell(row, column, BOARD_CELL.S2L_HIT)
-        } else if (this.board.getBoard()[row][column] === BOARD_CELL.S1L_PART) {
-            this.board.setCell(row, column, BOARD_CELL.S1L_DES)
-            this.board.setClientCell(row, column, BOARD_CELL.S1L_DES)
+            return
         }
+
+        const shipHit = this.getShipHit(row, column)
+        shipHit.increaseNReceivedHits()
+        const isShipDestroyed = shipHit.getStatus() === SHIP_STATUS.DESTROYED
+        let newCell
+        if (isShipDestroyed) {
+            if (cellBoard === BOARD_CELL.S4L_PART) newCell = BOARD_CELL.S4L_DES
+            if (cellBoard === BOARD_CELL.S3L_PART) newCell = BOARD_CELL.S3L_DES
+            if (cellBoard === BOARD_CELL.S2L_PART) newCell = BOARD_CELL.S2L_DES
+            if (cellBoard === BOARD_CELL.S1L_PART) newCell = BOARD_CELL.S1L_DES
+
+            const cellParams = {
+                intialPosition: shipHit.getPosition(),
+                orientation: shipHit.getOrientation(),
+                nCells: shipHit.getLength(),
+                newValue: newCell,
+            }
+
+            this.board.setCells(cellParams)
+            this.board.setClientCells(cellParams)
+        } else {
+            if (cellBoard === BOARD_CELL.S4L_PART) newCell = BOARD_CELL.S4L_HIT
+            if (cellBoard === BOARD_CELL.S3L_PART) newCell = BOARD_CELL.S3L_HIT
+            if (cellBoard === BOARD_CELL.S2L_PART) newCell = BOARD_CELL.S2L_HIT
+            if (cellBoard === BOARD_CELL.S1L_PART) newCell = BOARD_CELL.S1L_HIT
+
+            this.board.setCell(row, column, newCell)
+            this.board.setClientCell(row, column, newCell)
+        }
+    }
+
+    getBoard() {
+        return this.board
+    }
+
+    private getShipHit(row: number, column: number) {
+        return this.ships.find((s) => s.isPartOfShip(row, column))
     }
 }

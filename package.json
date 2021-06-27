@@ -10,7 +10,7 @@
     "dev": "nodemon dist/src/index.js",
     "prepare": "husky install",
     "eslint": "npx eslint src/*.ts",
-    "eslint-fix": "npx eslint src/*.ts --fix"
+    "eslint-fix": "npx eslint src/*.ts --^fit"
   },
   "keywords": [],
   "author": "pixrael777@gmail.com",

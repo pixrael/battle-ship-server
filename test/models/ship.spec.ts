@@ -15,7 +15,7 @@ describe('Instancing right ship', () => {
                 type: SHIP_TYPE.S4L,
                 length: 4,
                 orientation: SHIP_ORIENTATION.HORIZONTAL,
-                hit: [],
+                nReceivedHit: 0,
                 status: SHIP_STATUS.PERFECT,
                 position: { r: 0, c: 0 },
             }
@@ -31,7 +31,7 @@ describe('Instancing right ship', () => {
                 type: SHIP_TYPE.S3L,
                 length: 3,
                 orientation: SHIP_ORIENTATION.HORIZONTAL,
-                hit: [],
+                nReceivedHit: 0,
                 status: SHIP_STATUS.PERFECT,
                 position: { r: 0, c: 0 },
             }
@@ -47,7 +47,7 @@ describe('Instancing right ship', () => {
                 type: SHIP_TYPE.S2L,
                 length: 2,
                 orientation: SHIP_ORIENTATION.HORIZONTAL,
-                hit: [],
+                nReceivedHit: 0,
                 status: SHIP_STATUS.PERFECT,
                 position: { r: 0, c: 0 },
             }
@@ -63,7 +63,7 @@ describe('Instancing right ship', () => {
                 type: SHIP_TYPE.S1L,
                 length: 1,
                 orientation: SHIP_ORIENTATION.HORIZONTAL,
-                hit: [],
+                nReceivedHit: 0,
                 status: SHIP_STATUS.PERFECT,
                 position: { r: 0, c: 0 },
             }

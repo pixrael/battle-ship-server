@@ -134,12 +134,17 @@ export class Board {
         this.board[row][column] = cell
     }
 
-    setCells(
-        intialPosition: Coordinate,
-        orientation: SHIP_ORIENTATION,
-        nCells: number,
+    setCells({
+        intialPosition,
+        orientation,
+        nCells,
+        newValue,
+    }: {
+        intialPosition: Coordinate
+        orientation: SHIP_ORIENTATION
+        nCells: number
         newValue: BOARD_CELL
-    ) {
+    }) {
         if (orientation === SHIP_ORIENTATION.HORIZONTAL) {
             for (let i = 0; i < nCells; i++) {
                 this.board[intialPosition.r][intialPosition.c + i] = newValue
@@ -155,12 +160,17 @@ export class Board {
         this.clientBoard[row][column] = cell
     }
 
-    setClientCells(
-        intialPosition: Coordinate,
-        orientation: SHIP_ORIENTATION,
-        nCells: number,
+    setClientCells({
+        intialPosition,
+        orientation,
+        nCells,
+        newValue,
+    }: {
+        intialPosition: Coordinate
+        orientation: SHIP_ORIENTATION
+        nCells: number
         newValue: BOARD_CELL
-    ) {
+    }) {
         if (orientation === SHIP_ORIENTATION.HORIZONTAL) {
             for (let i = 0; i < nCells; i++) {
                 this.clientBoard[intialPosition.r][intialPosition.c + i] =
@@ -172,6 +182,10 @@ export class Board {
                     newValue
             }
         }
+    }
+
+    setShips(ships) {
+        this.ships = ships
     }
 
     private calculateRandomPositionAndOrientation(shipLength: number) {
@@ -264,6 +278,14 @@ export class Board {
         for (let i = 0; i < preConfig10x10Board1.length; i++) {
             for (let j = 0; j < preConfig10x10Board1[0].length; j++) {
                 this.board[i][j] = preConfig10x10Board1[i][j]
+            }
+        }
+    }
+
+    placeConfigShipDistribution(configShipDistribution: number[][]) {
+        for (let i = 0; i < configShipDistribution.length; i++) {
+            for (let j = 0; j < configShipDistribution[0].length; j++) {
+                this.board[i][j] = configShipDistribution[i][j]
             }
         }
     }

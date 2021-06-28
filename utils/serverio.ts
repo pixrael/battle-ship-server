@@ -21,7 +21,9 @@ function initSocket(server, origin, gameServer: GamesServer) {
                 })
             } else {
                 const state = game.getBattleClientState()
-                socket.emit('joined', state)
+                const shipsData = game.getShipDataClient()
+                const nAttempsData = game.getNAttempsData()
+                socket.emit('joined', { ...state, shipsData, nAttempsData })
             }
         })
 
@@ -30,7 +32,13 @@ function initSocket(server, origin, gameServer: GamesServer) {
             game.shot(row, column)
             const state = game.getBattleClientState()
             boardConsoleLogger(game.getBattleFullState().board)
-            socket.emit('current-state', state)
+            const shipsData = game.getShipDataClient()
+            const nAttempsData = game.getNAttempsData()
+            socket.emit('current-state', {
+                ...state,
+                shipsData,
+                nAttempsData,
+            })
         })
     })
 }

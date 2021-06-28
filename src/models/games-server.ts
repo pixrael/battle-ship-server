@@ -1,12 +1,15 @@
 import { v4 as uuidv4 } from 'uuid'
 import { Battle, BATTLE_MODES } from './battle'
+import { SHIP_STATUS } from './ship'
 
 class Game {
     private id: string
     private battle: Battle
     constructor(id: string, mode: BATTLE_MODES, nMaxAttemps: number) {
         this.id = id
-        this.battle = new Battle(id, mode, nMaxAttemps)
+        if (mode !== BATTLE_MODES.CUSTOM) this.battle = new Battle(id, mode)
+        else this.battle = new Battle(id, mode, nMaxAttemps)
+
         this.battle.setInitalRandomShipPositions()
     }
 
@@ -24,6 +27,21 @@ class Game {
 
     shot(row: number, column: number) {
         this.battle.shot(row, column)
+    }
+
+    getShipDataClient() {
+        return this.battle.getShips().map((ship) => ({
+            type: ship.getType(),
+            destroyed: ship.getStatus() === SHIP_STATUS.DESTROYED,
+        }))
+    }
+
+    getNAttempsData() {
+        return {
+            nMaxAttemps: this.battle.getNMaxAttemps(),
+            nAttemps: this.battle.getNAttemps(),
+            infinite: this.battle.getMode() === BATTLE_MODES.EASY,
+        }
     }
 }
 

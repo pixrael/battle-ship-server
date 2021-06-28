@@ -21,7 +21,7 @@ export class Coordinate {
 
 export class Battle {
     private battleId: string
-    private mode: string
+    private mode: BATTLE_MODES
     private nMaxAttemps: number
     private nAttemps: number
     private status: BATTLE_STATUS
@@ -148,6 +148,22 @@ export class Battle {
 
     getBoard() {
         return this.board
+    }
+
+    getShips() {
+        return this.ships
+    }
+
+    getNAttemps() {
+        return this.nAttemps
+    }
+
+    getNMaxAttemps() {
+        return this.nMaxAttemps
+    }
+
+    getMode() {
+        return this.mode
     }
 
     private getShipHit(row: number, column: number) {

@@ -190,18 +190,19 @@ export class Board {
 
     private calculateRandomPositionAndOrientation(shipLength: number) {
         let orientation = SHIP_ORIENTATION.HORIZONTAL
-        if (Random.randomBetween(0, 1)) orientation = SHIP_ORIENTATION.VERTICAL
+        if (Random.randomBetween(0, 2) && shipLength !== 1)
+            orientation = SHIP_ORIENTATION.VERTICAL
 
-        let limitRandomX = this.width - shipLength
-        let limitRandomY = this.height
+        let limitRandomRow = this.height
+        let limitRandomColumn = this.width - shipLength
 
         if (orientation === SHIP_ORIENTATION.VERTICAL) {
-            limitRandomX = this.width
-            limitRandomY = this.height - shipLength
+            limitRandomRow = this.height - shipLength
+            limitRandomColumn = this.width
         }
 
-        const r = Random.randomBetween(0, limitRandomX)
-        const c = Random.randomBetween(0, limitRandomY)
+        const r = Random.randomBetween(0, limitRandomRow)
+        const c = Random.randomBetween(0, limitRandomColumn)
         return { orientation, position: { r, c } }
     }
 

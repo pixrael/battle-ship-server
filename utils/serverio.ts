@@ -20,10 +20,15 @@ function initSocket(server, origin, gameServer: GamesServer) {
                     error: 'game with that id doenst exist',
                 })
             } else {
+                game.addNewPlayer(socket)
+
                 const state = game.getBattleClientState()
                 const shipsData = game.getShipDataClient()
                 const nAttempsData = game.getNAttempsData()
-                socket.emit('joined', { ...state, shipsData, nAttempsData })
+
+                game.getPlayers().forEach((s) =>
+                    s.emit('joined', { ...state, shipsData, nAttempsData })
+                )
             }
         })
 
@@ -34,11 +39,10 @@ function initSocket(server, origin, gameServer: GamesServer) {
             boardConsoleLogger(game.getBattleFullState().board)
             const shipsData = game.getShipDataClient()
             const nAttempsData = game.getNAttempsData()
-            socket.emit('current-state', {
-                ...state,
-                shipsData,
-                nAttempsData,
-            })
+
+            game.getPlayers().forEach((s) =>
+                s.emit('current-state', { ...state, shipsData, nAttempsData })
+            )
         })
 
         socket.on('exit-battle', ({ battleId }) => {
@@ -48,7 +52,11 @@ function initSocket(server, origin, gameServer: GamesServer) {
 
         socket.on('disconnect', () => {
             const game = gameServer.getGameBySocket(socket)
-            gameServer.removeGame(game)
+            if (!game) return
+            game.removePlayer(socket)
+            if (!game.getPlayers().length) {
+                gameServer.removeGame(game)
+            }
         })
     })
 }

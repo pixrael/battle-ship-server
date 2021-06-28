@@ -86,7 +86,7 @@ export class Battle {
     getClientState() {
         return {
             board: this.board.getClientBoard(),
-            'batte-states': this.status,
+            battleState: this.status,
         }
     }
 

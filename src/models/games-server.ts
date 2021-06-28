@@ -69,7 +69,7 @@ export default class GamesServer {
         return this.games.find((game) => game.getGameId() === id)
     }
 
-    getGameBySocket(socket: Socket) {
+    getGameBySocket(socket) {
         return this.games.find((game) => game.getSocket() === socket)
     }
 

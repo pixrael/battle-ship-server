@@ -6,7 +6,7 @@ const socketio = require('socket.io')
 function initSocket(server, origin, gameServer: GamesServer) {
     const io = socketio(server, {
         cors: {
-            origin, //TODO: depends on the environment
+            origin, // TODO: depends on the environment
             methods: ['GET', 'POST'],
         },
     })

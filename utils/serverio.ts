@@ -40,6 +40,16 @@ function initSocket(server, origin, gameServer: GamesServer) {
                 nAttempsData,
             })
         })
+
+        socket.on('exit-battle', ({ battleId }) => {
+            const game = gameServer.getGameById(battleId)
+            gameServer.removeGame(game)
+        })
+
+        socket.on('disconnect', () => {
+            const game = gameServer.getGameBySocket(socket)
+            gameServer.removeGame(game)
+        })
     })
 }
 

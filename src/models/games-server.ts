@@ -5,6 +5,7 @@ import { SHIP_STATUS } from './ship'
 class Game {
     private id: string
     private battle: Battle
+    private socket
     constructor(id: string, mode: BATTLE_MODES, nMaxAttemps: number) {
         this.id = id
         if (mode !== BATTLE_MODES.CUSTOM) this.battle = new Battle(id, mode)
@@ -43,6 +44,14 @@ class Game {
             infinite: this.battle.getMode() === BATTLE_MODES.EASY,
         }
     }
+
+    setSocket(socket) {
+        this.socket = socket
+    }
+
+    getSocket() {
+        return this.socket
+    }
 }
 
 export default class GamesServer {
@@ -58,5 +67,18 @@ export default class GamesServer {
 
     getGameById(id: string) {
         return this.games.find((game) => game.getGameId() === id)
+    }
+
+    getGameBySocket(socket: Socket) {
+        return this.games.find((game) => game.getSocket() === socket)
+    }
+
+    removeGame(game: Game) {
+        const i = this.games.indexOf(game)
+        this.games.splice(i, 1)
+    }
+
+    getGames() {
+        return this.games
     }
 }

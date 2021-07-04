@@ -1,30 +1,37 @@
+/* eslint-disable import/first */
 export {}
-// eslint-disable-next-line import/first
+import express from 'express'
+import http from 'http'
+import path from 'path'
+import cors from 'cors'
 import GamesServer from './models/games-server'
+import ServerRouter from './server-router'
+import ServerSocketBattleship from '../utils/server-socket-battleship'
 
-const express = require('express')
 const app = express()
-const http = require('http')
-const path = require('path')
-const cors = require('cors')
 
 app.use(cors())
 app.use(express.static(path.join(__dirname, 'public')))
 const server = http.createServer(app)
 
-const router = require('./routes')
-
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
-app.use(router)
+const gameServer = new GamesServer()
+const serverRouter = new ServerRouter(
+    express.Router(),
+    path,
+    __dirname,
+    gameServer
+)
 
-// eslint-disable-next-line import/prefer-default-export
-export const gameServer = new GamesServer()
+const definedRouter = serverRouter.defineRoutes()
+app.use(definedRouter)
 
-const { initSocket } = require('../utils/serverio')
-initSocket(server, 'http://localhost:3000', gameServer) // TODO: should depends of the environment
+const serverSocket = new ServerSocketBattleship(server, gameServer)
+serverSocket.setupSocket('http://localhost:3000') // TODO configure to have different environments
+serverSocket.initSocket()
 
 server.listen(3001, () => {
-    console.log('listen 3001')
+    console.log('listen 3001!')
 })

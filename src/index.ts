@@ -17,18 +17,18 @@ const server = http.createServer(app)
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
-const gameServer = new GamesServer()
+const gamesServer = new GamesServer()
 const serverRouter = new ServerRouter(
     express.Router(),
     path,
     __dirname,
-    gameServer
+    gamesServer
 )
 
 const definedRouter = serverRouter.defineRoutes()
 app.use(definedRouter)
 
-const serverSocket = new ServerSocketBattleship(server, gameServer)
+const serverSocket = new ServerSocketBattleship(server, gamesServer)
 serverSocket.setupSocket('http://localhost:3000') // TODO configure to have different environments
 serverSocket.initSocket()
 

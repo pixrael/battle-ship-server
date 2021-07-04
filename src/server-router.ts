@@ -1,10 +1,19 @@
-export default class ServerRouter {
-    private path
-    private router
-    private dirname
-    private gameServer
+import { Router } from 'express'
+import { PlatformPath } from 'path'
+import GamesServer from './models/games-server'
 
-    constructor(router, path, dirname, gameServer) {
+export default class ServerRouter {
+    private path: PlatformPath
+    private router: Router
+    private dirname: string
+    private gameServer: GamesServer
+
+    constructor(
+        router: Router,
+        path: PlatformPath,
+        dirname: string,
+        gameServer: GamesServer
+    ) {
         this.path = path
         this.router = router
         this.dirname = dirname

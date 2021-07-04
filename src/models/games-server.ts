@@ -1,3 +1,4 @@
+import socketio from 'socket.io'
 import { v4 as uuidv4 } from 'uuid'
 import { Battle, BATTLE_MODES } from './battle'
 import { SHIP_STATUS } from './ship'
@@ -46,16 +47,16 @@ class Game {
         }
     }
 
-    setSocket(socket) {
+    setSocket(socket: socketio.Socket) {
         this.players.push(socket)
     }
 
-    removePlayer(socket) {
+    removePlayer(socket: socketio.Socket) {
         const index = this.players.indexOf((s) => s === socket)
         this.players.splice(index, 1)
     }
 
-    addNewPlayer(socket) {
+    addNewPlayer(socket: socketio.Socket) {
         this.players.push(socket)
     }
 
@@ -63,7 +64,7 @@ class Game {
         return this.players
     }
 
-    existPlayer(socket) {
+    existPlayer(socket: socketio.Socket) {
         return this.players.some((p) => p === socket)
     }
 }
@@ -83,7 +84,7 @@ export default class GamesServer {
         return this.games.find((game) => game.getGameId() === id)
     }
 
-    getGameBySocket(socket) {
+    getGameBySocket(socket: socketio.Socket) {
         return this.games.find((game) => game.existPlayer(socket))
     }
 

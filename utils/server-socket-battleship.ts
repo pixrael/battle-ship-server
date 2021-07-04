@@ -1,18 +1,20 @@
+import http from 'http'
 import socketio from 'socket.io'
+import GamesServer from '../src/models/games-server'
 import { boardConsoleLogger } from './board-logger'
 export default class ServerSocketBattleship {
     private socket
-    private server
-    private gameServer
-    private io
+    private server: http.Server
+    private gamesServer: GamesServer
+    private io: socketio.Server
 
-    constructor(server, gameServer) {
+    constructor(server: http.Server, gamesServer: GamesServer) {
         this.server = server
         this.socket = socketio
-        this.gameServer = gameServer
+        this.gamesServer = gamesServer
     }
 
-    setupSocket(origin) {
+    setupSocket(origin: string) {
         this.io = this.socket(this.server, {
             cors: {
                 origin, // TODO: depends on the environment
@@ -22,9 +24,9 @@ export default class ServerSocketBattleship {
     }
 
     initSocket() {
-        this.io.on('connection', (socket) => {
+        this.io.on('connection', (socket: socketio.Socket) => {
             socket.on('join-game', ({ battleId }) => {
-                const game = this.gameServer.getGameById(battleId)
+                const game = this.gamesServer.getGameById(battleId)
 
                 if (!game) {
                     socket.emit('not-joined', {
@@ -46,7 +48,7 @@ export default class ServerSocketBattleship {
             socket.on('shot', ({ battleId, row, column }) => {
                 console.log('shot!!!')
 
-                const game = this.gameServer.getGameById(battleId)
+                const game = this.gamesServer.getGameById(battleId)
                 game.shot(row, column)
                 const state = game.getBattleClientState()
                 boardConsoleLogger(game.getBattleFullState().board)
@@ -63,16 +65,16 @@ export default class ServerSocketBattleship {
             })
 
             socket.on('exit-battle', ({ battleId }) => {
-                const game = this.gameServer.getGameById(battleId)
-                this.gameServer.removeGame(game)
+                const game = this.gamesServer.getGameById(battleId)
+                this.gamesServer.removeGame(game)
             })
 
             socket.on('disconnect', () => {
-                const game = this.gameServer.getGameBySocket(socket)
+                const game = this.gamesServer.getGameBySocket(socket)
                 if (!game) return
                 game.removePlayer(socket)
                 if (!game.getPlayers().length) {
-                    this.gameServer.removeGame(game)
+                    this.gamesServer.removeGame(game)
                 }
             })
         })

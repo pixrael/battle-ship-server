@@ -184,8 +184,12 @@ export class Board {
         }
     }
 
-    setShips(ships) {
+    setShips(ships: Ship[]) {
         this.ships = ships
+    }
+
+    getShips() {
+        return this.ships
     }
 
     private calculateRandomPositionAndOrientation(shipLength: number) {
